@@ -2,17 +2,24 @@
 
 Internal Streamlit app for creating standardized UTM links across marketing, ecommerce, sales, customer support, events, marketplaces, QR codes, agentic search references, and internal sharing.
 
-## What changed in v2.1
+## What changed in v2.1.2
 
-- Simplified the main workflow so most users only need to enter a destination URL, choose a link type, and add a plain-English campaign/link name.
-- Removed the visible date field. The app now automatically uses the date the URL is generated.
-- Moved source, medium, content, and term controls into an **Advanced tracking fields** section.
-- Added link-type presets for marketing campaigns, paid ads, social posts, sales outreach, customer support, events/QR codes, marketplaces, internal links, SEO/agentic references, and **Other / not sure**.
-- Added a controlled `other` objective for situations where non-marketing users do not know the exact campaign.
-- Auto-selects `other` for sales, customer support, dealer team, operations, leadership, training, and product users when those departments are selected.
-- Improved readability by forcing light input fields, stronger text contrast, more top spacing below the Streamlit header, and neutral Sunstone styling with orange accents instead of PJX purple or gold.
-- Added tooltips for custom content and custom term fields.
-- Expanded source and medium options and added custom source/custom medium controls for edge cases.
+- Fixed dropdown readability so open menu options use a light background and readable dark text.
+- Replaced UTM-heavy labels with plainer field names like **Use case**, **Link destination**, **Business area**, **Team using the link**, and **Goal or campaign bucket**.
+- Added short helper text under key fields so non-marketing users understand what to enter without being over-explained to.
+- Added descriptive dropdown labels that explain what each option means while preserving clean UTM values behind the scenes.
+- Kept advanced tracking available for power users while making the default workflow easier for sales, support, operations, and other teams.
+
+## Current workflow
+
+Most users only need to fill out:
+
+1. Link destination
+2. Use case
+3. Campaign or link name
+4. Notes, optional
+
+The app fills in the tracking structure based on the selected use case. Advanced tracking is available for users who need to adjust the exact source, medium, content, or term.
 
 ## UTM standard
 
