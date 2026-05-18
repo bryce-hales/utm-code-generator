@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 import zipfile
 from pathlib import Path
 from urllib.parse import urlparse
 
-APP_VERSION = "2.0.0"
+APP_VERSION = "2.1.3"
 ROOT = Path(__file__).resolve().parents[1]
 TEAMS_DIR = ROOT / "teams"
 DIST_DIR = ROOT / "dist"
@@ -37,7 +36,7 @@ def render_manifest(app_base_url: str, microsoft_app_id: str) -> dict:
 
 def write_icon(path: Path, color: tuple[int, int, int, int], accent: tuple[int, int, int, int]) -> None:
     try:
-        from PIL import Image, ImageDraw, ImageFont
+        from PIL import Image, ImageDraw
     except ImportError as exc:
         raise SystemExit("Install Pillow first: pip install Pillow") from exc
 
@@ -55,8 +54,8 @@ def build_package(app_base_url: str, microsoft_app_id: str, output: Path) -> Pat
 
     manifest = render_manifest(app_base_url, microsoft_app_id)
     (work_dir / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-    write_icon(work_dir / "color.png", (255, 255, 255, 0), (111, 74, 115, 255))
-    write_icon(work_dir / "outline.png", (255, 255, 255, 0), (75, 48, 79, 255))
+    write_icon(work_dir / "color.png", (255, 255, 255, 0), (255, 130, 0, 255))
+    write_icon(work_dir / "outline.png", (255, 255, 255, 0), (198, 95, 0, 255))
 
     with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as zf:
         for file_name in ["manifest.json", "color.png", "outline.png"]:
