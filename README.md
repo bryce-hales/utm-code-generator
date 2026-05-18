@@ -1,16 +1,16 @@
 # Sunstone UTM Builder
 
-Internal Streamlit app for creating standardized UTM links across marketing, ecommerce, sales, customer support, events, marketplaces, QR codes, and internal sharing.
+Internal Streamlit app for creating standardized UTM links across marketing, ecommerce, sales, customer support, events, marketplaces, QR codes, agentic search references, and internal sharing.
 
-## What changed in v2
+## What changed in v2.1
 
-- Reworked the visual style to better match the permanent jewelry brand without using the gold accent.
-- Added a standard campaign naming format: `yyyymmdd_unit_objective_campaign-name`.
-- Added business unit and department fields so links are easier to audit later.
-- Expanded UTM sources and mediums for Shopify, HubSpot, sales outreach, customer support, Amazon, Etsy, TikTok Shop, PJX, QR codes, Microsoft Teams, email signatures, and agentic search tools.
-- Added campaign objectives, content placements, and term presets that better fit Sunstone workflows.
-- Expanded Google Sheets logging fields for clearer reporting.
-- Added Microsoft Teams packaging files so the hosted app can be submitted as a Teams personal tab.
+- Simplified the main workflow so most users only need to enter a destination URL, choose a link type, and add a plain-English campaign/link name.
+- Removed the visible date field. The app now automatically uses the date the URL is generated.
+- Moved source, medium, content, and term controls into an **Advanced tracking fields** section.
+- Added link-type presets for marketing campaigns, paid ads, social posts, sales outreach, customer support, events/QR codes, marketplaces, internal links, and SEO/agentic references.
+- Improved readability by forcing light input fields, stronger text contrast, more top spacing below the Streamlit header, and neutral Sunstone styling with orange accents instead of PJX purple or gold.
+- Added tooltips for custom content and custom term fields.
+- Expanded source and medium options and added custom source/custom medium controls for edge cases.
 
 ## UTM standard
 
@@ -34,7 +34,7 @@ Naming rules:
 - Use underscores between UTM structure parts.
 - Use hyphens inside campaign and content names.
 - Use plus signs inside keyword terms.
-- Add notes for every generated link so future reporting has context.
+- Add notes when helpful so future reporting has context.
 
 ## Run locally
 
