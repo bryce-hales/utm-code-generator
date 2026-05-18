@@ -9,7 +9,7 @@ import pandas as pd
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 
-APP_VERSION = "2.1.0"
+APP_VERSION = "2.1.1"
 
 BUSINESS_UNITS = {
     "Permanent Jewelry": "pj",
@@ -84,7 +84,7 @@ SOURCE_TO_MEDIUMS = {
     "perplexity": ["agentic", "referral", "content"],
     "gemini": ["agentic", "referral", "content"],
     "copilot": ["agentic", "referral", "internal"],
-    "manual_entry": ["internal", "direct", "support"],
+    "manual_entry": ["internal", "direct", "support", "sales_outreach", "referral"],
 }
 
 ALL_MEDIUMS = sorted({medium for mediums in SOURCE_TO_MEDIUMS.values() for medium in mediums} | {
@@ -96,7 +96,7 @@ ALL_MEDIUMS = sorted({medium for mediums in SOURCE_TO_MEDIUMS.values() for mediu
 })
 
 OBJECTIVES = [
-    "brand_awareness", "prospecting", "retargeting", "product_launch", "starter_kits",
+    "other", "brand_awareness", "prospecting", "retargeting", "product_launch", "starter_kits",
     "chain_connectors", "marketplace_push", "promo", "lead_gen", "lead_nurture",
     "event_registration", "sales_enablement", "dealer_recruitment", "support_resource",
     "user_manual", "data_sheet", "troubleshooting", "post_purchase", "seo_content",
@@ -110,7 +110,7 @@ CONTENT_OPTIONS = [
     "landing_page_form", "register_button", "qr_code", "sales_signature",
     "proposal_link", "quote_link", "support_article", "manual_link", "data_sheet",
     "setup_guide", "faq", "comparison", "offer", "discount", "free_shipping",
-    "version_a", "version_b", "internal_link",
+    "version_a", "version_b", "internal_link", "other",
 ]
 
 TERM_PRESETS = [
@@ -119,20 +119,23 @@ TERM_PRESETS = [
     "chain+by+the+inch", "jump+rings", "charms", "connectors", "mobile+artist",
     "studio+artist", "new+artist", "experienced+artist", "pjx", "event+registration",
     "dealer+application", "support+resource", "user+manual", "data+sheet", "amazon",
-    "etsy", "tiktok+shop", "answer+engine", "agentic+search",
+    "etsy", "tiktok+shop", "answer+engine", "agentic+search", "other",
 ]
 
 LINK_TYPE_PRESETS = {
     "Marketing campaign": dict(unit="Permanent Jewelry", department="marketing", source="hubspot", medium="email", objective="promo", content="primary_cta"),
     "Paid ad": dict(unit="Permanent Jewelry", department="marketing", source="google_ads", medium="paid_search", objective="prospecting", content="static_ad"),
     "Social post": dict(unit="Permanent Jewelry", department="marketing", source="instagram", medium="organic_social", objective="community", content="image"),
-    "Sales outreach": dict(unit="Permanent Jewelry", department="sales", source="sales_team", medium="sales_outreach", objective="sales_enablement", content="sales_signature"),
-    "Customer support": dict(unit="Permanent Jewelry", department="customer_support", source="customer_support", medium="support", objective="support_resource", content="support_article"),
+    "Sales outreach": dict(unit="Permanent Jewelry", department="sales", source="sales_team", medium="sales_outreach", objective="other", content="sales_signature"),
+    "Customer support": dict(unit="Permanent Jewelry", department="customer_support", source="customer_support", medium="support", objective="other", content="support_article"),
     "Event or QR code": dict(unit="PJX / Events", department="events", source="qr_code", medium="qr", objective="event_registration", content="qr_code"),
     "Marketplace": dict(unit="Permanent Jewelry", department="ecommerce", source="amazon", medium="shopping", objective="marketplace_push", content="product_card"),
-    "Internal link": dict(unit="Corporate / General", department="operations", source="microsoft_teams", medium="internal", objective="internal", content="internal_link"),
+    "Internal link": dict(unit="Corporate / General", department="operations", source="microsoft_teams", medium="internal", objective="other", content="internal_link"),
     "SEO / agentic reference": dict(unit="Permanent Jewelry", department="marketing", source="chatgpt", medium="agentic", objective="agentic_visibility", content="text_link"),
+    "Other / not sure": dict(unit="Corporate / General", department="operations", source="manual_entry", medium="internal", objective="other", content="other"),
 }
+
+NON_MARKETING_DEPARTMENTS = {"sales", "customer_support", "dealer_team", "operations", "leadership", "training", "product"}
 
 LOG_COLUMNS = [
     "submitted_at_utc", "app_version", "business_unit", "department", "link_type",
@@ -234,6 +237,8 @@ Everything else is prefilled from the link type and can be adjusted in Advanced 
 **Campaign format**
 
 `yyyymmdd_unit_objective_campaign-name`
+
+Use `other` when the real campaign is unknown. This is intended for non-marketing users who still need a usable tracking link.
 """)
     st.caption(f"App version {APP_VERSION}")
 
@@ -261,7 +266,7 @@ with left:
         st.session_state.content_select = preset["content"]
         st.session_state._last_link_type = link_type
 
-    campaign_name_raw = st.text_input("Campaign or link name", placeholder="zp2 launch, dealer follow up, support manual, pjx early access", help="A short, plain-English name. The app formats it automatically.")
+    campaign_name_raw = st.text_input("Campaign or link name", placeholder="dealer follow up, support manual, customer quote, internal resource", help="A short, plain-English name. The app formats it automatically.")
     notes = st.text_input("Notes (optional)", placeholder="Where will this be used? Who is sending it?")
     st.markdown(f'<div class="small-note">Date will be added automatically: <strong>{datetime.now().date().strftime("%Y/%m/%d")}</strong></div>', unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
@@ -271,7 +276,14 @@ with right:
     unit_options = list(BUSINESS_UNITS.keys())
     business_unit_label = st.selectbox("Business unit", unit_options, key="business_unit", index=index_of(unit_options, st.session_state.get("business_unit", "Permanent Jewelry")))
     department = st.selectbox("Department", DEPARTMENTS, key="department", index=index_of(DEPARTMENTS, st.session_state.get("department", "marketing")))
-    objective = st.selectbox("Campaign objective", OBJECTIVES, key="objective", index=index_of(OBJECTIVES, st.session_state.get("objective", "product_launch")))
+
+    if department in NON_MARKETING_DEPARTMENTS and st.session_state.get("_last_department") != department:
+        st.session_state.objective = "other"
+    st.session_state._last_department = department
+
+    objective = st.selectbox("Campaign objective", OBJECTIVES, key="objective", index=index_of(OBJECTIVES, st.session_state.get("objective", "other")), help="Use 'other' when the exact marketing campaign or objective is unknown.")
+    if objective == "other":
+        st.caption("Using `other` keeps the link standardized even when the exact campaign is unknown.")
     st.markdown("</div>", unsafe_allow_html=True)
 
 with st.expander("Advanced tracking fields", expanded=False):
