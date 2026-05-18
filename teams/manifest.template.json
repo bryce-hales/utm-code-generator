@@ -21,12 +21,12 @@
     "color": "color.png",
     "outline": "outline.png"
   },
-  "accentColor": "6F4A73",
+  "accentColor": "FF8200",
   "staticTabs": [
     {
       "entityId": "utm-builder",
       "name": "UTM Builder",
-      "contentUrl": "{{APP_BASE_URL}}",
+      "contentUrl": "{{APP_BASE_URL}}?teams_user_email={user.userPrincipalName}&teams_login_hint={user.loginHint}&teams_user_id={user.id}&teams_tenant_id={user.tenant.id}&teams_display_name={user.displayName}",
       "websiteUrl": "{{APP_BASE_URL}}",
       "scopes": ["personal"]
     }
