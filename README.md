@@ -7,7 +7,9 @@ Internal Streamlit app for creating standardized UTM links across marketing, eco
 - Simplified the main workflow so most users only need to enter a destination URL, choose a link type, and add a plain-English campaign/link name.
 - Removed the visible date field. The app now automatically uses the date the URL is generated.
 - Moved source, medium, content, and term controls into an **Advanced tracking fields** section.
-- Added link-type presets for marketing campaigns, paid ads, social posts, sales outreach, customer support, events/QR codes, marketplaces, internal links, and SEO/agentic references.
+- Added link-type presets for marketing campaigns, paid ads, social posts, sales outreach, customer support, events/QR codes, marketplaces, internal links, SEO/agentic references, and **Other / not sure**.
+- Added a controlled `other` objective for situations where non-marketing users do not know the exact campaign.
+- Auto-selects `other` for sales, customer support, dealer team, operations, leadership, training, and product users when those departments are selected.
 - Improved readability by forcing light input fields, stronger text contrast, more top spacing below the Streamlit header, and neutral Sunstone styling with orange accents instead of PJX purple or gold.
 - Added tooltips for custom content and custom term fields.
 - Expanded source and medium options and added custom source/custom medium controls for edge cases.
@@ -26,6 +28,7 @@ Examples:
 20260518_pj_product_launch_zp2-luxe
 20260518_pjx_event_registration_early-access
 20260518_ind_support_resource_laser-data-sheet
+20260518_pj_other_support-manual-follow-up
 ```
 
 Naming rules:
@@ -34,6 +37,7 @@ Naming rules:
 - Use underscores between UTM structure parts.
 - Use hyphens inside campaign and content names.
 - Use plus signs inside keyword terms.
+- Use `other` when the exact marketing campaign or objective is unknown.
 - Add notes when helpful so future reporting has context.
 
 ## Run locally
