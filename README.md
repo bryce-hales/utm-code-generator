@@ -1,30 +1,23 @@
 # Sunstone UTM Builder
 
-Internal Streamlit app for creating standardized UTM links across marketing, ecommerce, sales, customer support, events, marketplaces, QR codes, agentic search references, and internal sharing.
+Streamlit app for creating standardized UTM tracking links for marketing, ecommerce, sales, customer support, events, marketplaces, QR codes, AI/search references, and internal sharing.
 
-## What changed in v2.1.3
+## Overview
 
-- Fixed dropdown readability so open menu options use a light background and readable dark text.
-- Replaced UTM-heavy labels with plainer field names like **Use case**, **Link destination**, **Business area**, **Team using the link**, and **Goal or campaign bucket**.
-- Added short helper text under key fields so non-marketing users understand what to enter without being over-explained to.
-- Added descriptive dropdown labels that explain what each option means while preserving clean UTM values behind the scenes.
-- Added Microsoft Teams creator tracking via Teams context URL parameters.
-- Logs creator email, display name, Teams user ID, tenant ID, and creator source to Google Sheets when the app is opened from Teams.
-- Updated the Teams manifest template so the Teams tab passes user context into the Streamlit app URL.
-- Kept advanced tracking available for power users while making the default workflow easier for sales, support, operations, and other teams.
+The app creates clean UTM URLs using a consistent naming structure. Users can choose a use case, enter a destination URL, add a campaign or link name, and optionally adjust advanced tracking fields.
 
-## Current workflow
+## Current Workflow
 
-Most users only need to fill out:
+Most links can be created with four fields:
 
 1. Link destination
 2. Use case
 3. Campaign or link name
 4. Notes, optional
 
-The app fills in the tracking structure based on the selected use case. Advanced tracking is available for users who need to adjust the exact source, medium, content, or term.
+The app fills in the tracking structure based on the selected use case. Advanced tracking fields are available for source, medium, content, and term values.
 
-## UTM standard
+## UTM Standard
 
 Campaign format:
 
@@ -47,12 +40,12 @@ Naming rules:
 - Use underscores between UTM structure parts.
 - Use hyphens inside campaign and content names.
 - Use plus signs inside keyword terms.
-- Use `other` when the exact marketing campaign or objective is unknown.
-- Add notes when helpful so future reporting has context.
+- Use `other` when the exact campaign or objective is unknown.
+- Add notes when helpful for future reporting context.
 
-## Creator tracking in Microsoft Teams
+## Microsoft Teams Creator Tracking
 
-The Teams app package passes Teams context into the hosted Streamlit URL using query parameters:
+The Microsoft Teams app package can pass Teams context into the hosted Streamlit URL using query parameters:
 
 ```text
 teams_user_email
@@ -72,42 +65,41 @@ creator_tenant_id
 creator_source
 ```
 
-This is intended for crediting who created a UTM link. It should not be treated as secure authentication or permission control. For security-sensitive identity, use Microsoft Entra ID / Teams SSO token validation.
+These values are intended for attribution and reporting. They are not a replacement for secure authentication or permission control. Security-sensitive identity validation should use Microsoft Entra ID or Teams SSO token validation.
 
-## Run locally
+## Run Locally
 
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
 ```
 
-## Google Sheets logging
+## Google Sheets Logging
 
 The app expects a Streamlit Google Sheets connection named `gsheets` and a worksheet named `Sheet1`.
 
-If Google Sheets logging fails, the app still generates the final UTM URL and shows the logging error. This avoids blocking someone from creating a link during a campaign or support workflow.
+If Google Sheets logging fails, the app still generates the final UTM URL and displays the logging error instead of blocking link creation.
 
-## Microsoft Teams app package
+## Microsoft Teams App Package
 
-Teams will not run the Python Streamlit app directly. The Teams package wraps a hosted HTTPS version of the Streamlit app as a personal tab.
+The Teams package wraps a hosted HTTPS version of the Streamlit app as a personal tab.
 
-1. Deploy the Streamlit app to an HTTPS URL employees can access.
-2. Build the Teams package:
+Build the package with:
 
 ```bash
 python teams/package-teams-app.py --app-base-url https://your-hosted-app.example.com --microsoft-app-id YOUR-MICROSOFT-APP-ID
 ```
 
-3. Give IT the generated file:
+The generated package is saved as:
 
 ```text
 dist/sunstone-utm-builder-teams.zip
 ```
 
-Notes for IT review:
+Package details:
 
 - `validDomains` is generated from the hosted app URL.
 - The manifest uses `color.png`, `outline.png`, and `manifest.json` in the app package.
-- The default Microsoft app ID is a placeholder. Replace it before final approval if your IT process requires a registered app ID.
-- The Teams context fields are for attribution/logging, not secure proof of identity.
-- The manifest currently points privacy and terms URLs to `/privacy` and `/terms` on the hosted app domain. Change those to approved company URLs if those pages are not available.
+- The default Microsoft app ID is a placeholder and should be replaced when a registered app ID is available.
+- Teams context fields are used for attribution and logging.
+- Privacy and terms URLs default to `/privacy` and `/terms` on the hosted app domain.
